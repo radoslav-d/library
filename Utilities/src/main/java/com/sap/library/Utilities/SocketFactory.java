@@ -1,4 +1,4 @@
-package com.sap.library.Utilities;
+package com.sap.library.utilities;
 
 import java.io.IOException;
 import java.net.ServerSocket;

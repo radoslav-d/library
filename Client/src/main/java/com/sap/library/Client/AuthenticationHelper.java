@@ -1,13 +1,19 @@
-package com.sap.library.Client;
+package com.sap.library.client;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.sap.library.Utilities.AuthenticationFailedException;
-import com.sap.library.Utilities.Message;
-import com.sap.library.Utilities.Message.MessageType;
+import com.sap.library.utilities.exceptions.AuthenticationFailedException;
+import com.sap.library.utilities.message.Message;
+import com.sap.library.utilities.message.Message.MessageType;
 
+/**
+ * Helper class used in client side for sending and receiving authentication
+ * request and response.
+ * 
+ * @author Radoslav Dimitrov
+ */
 public class AuthenticationHelper {
 	
 	private ObjectInputStream reader;
@@ -23,17 +29,17 @@ public class AuthenticationHelper {
 			sendRequestForAuthentication(username, password);
 			receiveAuthenticationResponse();
 		} catch (ClassNotFoundException | IOException e) {
-			throw new AuthenticationFailedException("Internal Server error! Authentication Failed!");
+			throw new AuthenticationFailedException(e);
 		}
 	}
 	
 	private void sendRequestForAuthentication(String username, String password) throws IOException {
-		writer.writeObject(new Message(username, MessageType.AUTHENTICATION_REQUEST, password));
+		writer.writeObject(new Message(MessageType.AUTHENTICATION_REQUEST, username, password));
 	}
 	
 	private void receiveAuthenticationResponse() throws ClassNotFoundException, IOException {
 		Message response = (Message) reader.readObject();
-		if(response.getType().equals(MessageType.AUTHENTICATION_FAILED)) {
+		if (!response.getType().equals(MessageType.AUTHENTICATION_SUCCESS)) {
 			throw new AuthenticationFailedException("Authentication Failed! Your username or password might be incorrect");
 		}
 	}
