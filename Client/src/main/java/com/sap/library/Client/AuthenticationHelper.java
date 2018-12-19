@@ -1,0 +1,40 @@
+package com.sap.library.Client;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import com.sap.library.Utilities.AuthenticationFailedException;
+import com.sap.library.Utilities.Message;
+import com.sap.library.Utilities.Message.MessageType;
+
+public class AuthenticationHelper {
+	
+	private ObjectInputStream reader;
+	private ObjectOutputStream writer;
+	
+	public AuthenticationHelper(ObjectInputStream reader, ObjectOutputStream writer) {
+		this.reader = reader;
+		this.writer = writer;
+	}
+	
+	public void authenticate(String username, String password) {
+		try {
+			sendRequestForAuthentication(username, password);
+			receiveAuthenticationResponse();
+		} catch (ClassNotFoundException | IOException e) {
+			throw new AuthenticationFailedException("Internal Server error! Authentication Failed!");
+		}
+	}
+	
+	private void sendRequestForAuthentication(String username, String password) throws IOException {
+		writer.writeObject(new Message(username, MessageType.AUTHENTICATION_REQUEST, password));
+	}
+	
+	private void receiveAuthenticationResponse() throws ClassNotFoundException, IOException {
+		Message response = (Message) reader.readObject();
+		if(response.getType().equals(MessageType.AUTHENTICATION_FAILED)) {
+			throw new AuthenticationFailedException("Authentication Failed! Your username or password might be incorrect");
+		}
+	}
+}
