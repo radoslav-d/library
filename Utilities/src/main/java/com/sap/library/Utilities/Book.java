@@ -10,6 +10,7 @@ import java.util.Optional;
  */
 public class Book {
 
+	private String id;
 	private String isbn;
 	private String title;
 	private String author;
@@ -23,16 +24,25 @@ public class Book {
 		// default constructor
 	}
 
-	public Book(String isbn, String title, String author, int yearOfPublishing, boolean isTaken,
+	public Book(String id, String isbn, String title, String author, int yearOfPublishing, boolean isTaken,
 			Optional<String> takenBy, Calendar takenOn, Calendar returnedOn) {
-		this.isbn = isbn;
-		this.title = title;
-		this.author = author;
-		this.yearOfPublishing = yearOfPublishing;
-		this.isTaken = isTaken;
-		this.takenBy = takenBy;
-		this.takenOn = takenOn;
-		this.returnedOn = returnedOn;
+		setId(id);
+		setIsbn(isbn);
+		setTitle(title);
+		setAuthor(author);
+		setYearOfPublishing(yearOfPublishing);
+		setTaken(isTaken);
+		setTakenBy(takenBy);
+		setTakenOn(takenOn);
+		setReturnedOn(returnedOn);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getIsbn() {

@@ -41,20 +41,15 @@ public class SocketHandler implements Runnable {
 	}
 
 	public void run() {
-		try {
-			authenticate();
-			while (isActive) {
-				processRequests();
-			}
-		} catch (ClassNotFoundException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		authenticate();
+		while (isActive) {
+			processRequests();
 		}
 	}
 
-	private void authenticate() throws ClassNotFoundException, IOException {
+	private void authenticate() {
 		Message message = MessageDeliverer.receiveMessage(reader);
-		if (!message.getClass().equals(MessageType.AUTHENTICATION_REQUEST)) {
+		if (!message.getType().equals(MessageType.AUTHENTICATION_REQUEST)) {
 			throw new AuthenticationFailedException(
 					"Expected to receive " + MessageType.AUTHENTICATION_REQUEST + " but got " + message.getType());
 		}
@@ -64,7 +59,7 @@ public class SocketHandler implements Runnable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processRequests() throws ClassNotFoundException, IOException {
+	private void processRequests() {
 		Message message = MessageDeliverer.receiveMessage(reader);
 		switch (message.getType()) {
 		case ADD_BOOK_REQUEST:
