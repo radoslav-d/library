@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 def main():
+    # in cmd or git bash execute export DATABASE_URL={database url}
     dbUrl = os.getenv("DATABASE_URL")
     if not dbUrl:
         raise RuntimeError("DATABASE_URL is not set")
@@ -21,7 +22,8 @@ def createUserTable(db):
     userId SERIAL PRIMARY KEY,
     username VARCHAR NOT NULL,
     hash VARCHAR NOT NULL,
-    email VARCHAR NOT NULL);""")
+    email VARCHAR NOT NULL
+    );""")
     db.commit()
     print("Users table created")
 
@@ -31,7 +33,12 @@ def createBookTable(db):
     isbn VARCHAR NOT NULL,
     title VARCHAR NOT NULL,
     author VARCHAR NOT NULL,
-    year VARCHAR NOT NULL);""")
+    year VARCHAR NOT NULL,
+    isTaken BOOLEAN DEFAULT FALSE,
+    takenBy VARCHAR,
+    takenOn DATE,
+    returnedOn DATE
+    );""")
     db.commit()
     print("Books table created")
 
