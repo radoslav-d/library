@@ -6,24 +6,18 @@ import java.io.ObjectOutputStream;
 
 import com.sap.library.utilities.exceptions.MessageNotSentException;
 
-/**
- * Writes a message on ObjectOutputStream in a new Thread.
- * 
- * @author Radoslav Dimitrov
- */
-public class MessageDeliverer implements Runnable {
+public class MessageDeliverer {
 
-	private ObjectOutputStream writer;
-	private Message message;
-
-	private MessageDeliverer(ObjectOutputStream writer, Message message) {
-		this.writer = writer;
-		this.message = message;
-		new Thread(this).start();
+	private MessageDeliverer() {
+		// Utility class constructor
 	}
 
 	public static void deliverMessage(ObjectOutputStream writer, Message message) {
-		new MessageDeliverer(writer, message);
+		try {
+			writer.writeObject(message);
+		} catch (IOException e) {
+			throw new MessageNotSentException(e);
+		}
 	}
 
 	public static Message receiveMessage(ObjectInputStream reader) {
@@ -33,13 +27,4 @@ public class MessageDeliverer implements Runnable {
 			throw new MessageNotSentException(e);
 		}
 	}
-
-	public synchronized void run() {
-		try {
-			writer.writeObject(message);
-		} catch (IOException e) {
-			throw new MessageNotSentException(e);
-		}
-	}
-
 }

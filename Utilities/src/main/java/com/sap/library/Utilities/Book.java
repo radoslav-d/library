@@ -1,6 +1,6 @@
 package com.sap.library.utilities;
 
-import java.util.Calendar;
+import java.sql.Date;
 import java.util.Optional;
 
 /**
@@ -10,22 +10,22 @@ import java.util.Optional;
  */
 public class Book {
 
-	private String id;
+	private int id;
 	private String isbn;
 	private String title;
 	private String author;
 	private int yearOfPublishing;
 	private boolean isTaken;
 	private Optional<String> takenBy;
-	private Calendar takenOn;
-	private Calendar returnedOn;
+	private Date takenOn;
+	private Date returnedOn;
 
 	public Book() {
 		// default constructor
 	}
 
-	public Book(String id, String isbn, String title, String author, int yearOfPublishing, boolean isTaken,
-			Optional<String> takenBy, Calendar takenOn, Calendar returnedOn) {
+	public Book(int id, String isbn, String title, String author, int yearOfPublishing, boolean isTaken,
+			Optional<String> takenBy, Date takenOn, Date returnedOn) {
 		setId(id);
 		setIsbn(isbn);
 		setTitle(title);
@@ -37,11 +37,11 @@ public class Book {
 		setReturnedOn(returnedOn);
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -93,19 +93,19 @@ public class Book {
 		this.takenBy = takenBy;
 	}
 
-	public Calendar getTakenOn() {
+	public Date getTakenOn() {
 		return takenOn;
 	}
 
-	public void setTakenOn(Calendar takenOn) {
+	public void setTakenOn(Date takenOn) {
 		this.takenOn = takenOn;
 	}
 
-	public Calendar getReturnedOn() {
+	public Date getReturnedOn() {
 		return returnedOn;
 	}
 
-	public void setReturnedOn(Calendar returnedOn) {
+	public void setReturnedOn(Date returnedOn) {
 		this.returnedOn = returnedOn;
 	}
 

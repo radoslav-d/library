@@ -3,27 +3,28 @@ package com.sap.library.Server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.sap.library.utilities.SocketFactory;
-import com.sap.library.utilities.exceptions.AuthenticationFailedException;
 
 public class Controller implements Runnable {
 
 	private ServerSocket serverSocket;
 	private List<SocketHandler> socketHandlers;
 	private BookResponsesManager bookManager;
+	private PostgreService postgreService;
 	private boolean isActive;
 
-	public Controller() throws IOException {
+	public Controller(String databaseUrl) throws IOException, SQLException {
 		serverSocket = SocketFactory.getNewServerSocket();
-		construct();
+		construct(databaseUrl);
 	}
 
-	public Controller(int port) throws IOException {
+	public Controller(int port, String databaseUrl) throws IOException, SQLException {
 		serverSocket = new ServerSocket(port);
-		construct();
+		construct(databaseUrl);
 	}
 
 	public void start() {
@@ -63,14 +64,17 @@ public class Controller implements Runnable {
 	}
 
 	public void authenticateUser(String username, String password) {
-		// TODO fetch user from database
-		throw new AuthenticationFailedException(
-				"Authentication Failed! There is no matching username and password in the DB");
+		postgreService.authenticate(username, password);
 	}
 
-	private void construct() {
+	public void registerUser(String username, String password) {
+		postgreService.registerUser(username, password);
+	}
+
+	private void construct(String databaseUrl) throws SQLException {
 		socketHandlers = new ArrayList<>();
 		bookManager = new BookResponsesManager();
+		postgreService = new PostgreService(databaseUrl);
 	}
 
 }

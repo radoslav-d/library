@@ -6,6 +6,12 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import com.sap.library.utilities.SocketFactory;
+import com.sap.library.utilities.exceptions.AuthenticationFailedException;
+import com.sap.library.utilities.exceptions.MessageNotSentException;
+import com.sap.library.utilities.exceptions.RegistrationFailedException;
+import com.sap.library.utilities.message.Message;
+import com.sap.library.utilities.message.Message.MessageType;
+import com.sap.library.utilities.message.MessageDeliverer;
 
 public class Controller implements Runnable {
 
@@ -47,8 +53,25 @@ public class Controller implements Runnable {
 		endActivity();
 	}
 
+	/**
+	 * Authenticate the user.
+	 * 
+	 * @throws MessageNotSentException
+	 * @throws AuthenticationFailedException
+	 */
 	public void authenticate(String username, String password) {
 		authenticationHelper.authenticate(username, password);
+		isAuthenticated = true;
+	}
+
+	/**
+	 * Register the user.
+	 * 
+	 * @throws MessageNotSentException
+	 * @throws RegistrationFailedException
+	 */
+	public void register(String username, String password) {
+		MessageDeliverer.deliverMessage(writer, new Message(MessageType.REGISTER_REQUEST, username, password));
 		isAuthenticated = true;
 	}
 

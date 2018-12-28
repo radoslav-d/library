@@ -20,21 +20,27 @@ public class Message implements Serializable {
 	 * 
 	 * - AUTHENTICATION_SUCCESS: does not require anything;
 	 * 
+	 * - REGISTER_REQUEST: requires an username and a password;
+	 *
+	 * - REGISTER_FAILED: does not require anything;
+	 * 
+	 * - REGISTER_SUCCESS: does not require anything;
+	 * 
 	 * - ADD_BOOK_REQUEST: requires a book instance;
 	 * 
-	 * - DELETE_BOOK_REQUEST: requires a book ID as a String;
+	 * - DELETE_BOOK_REQUEST: requires a book ID as an int;
 	 * 
-	 * - MARK_BOOK_AS_TAKEN_REQUEST: requires a book ID as a String, person name as
-	 * a String, a Calendar from and an Optional<Calendar> to;
+	 * - MARK_BOOK_AS_TAKEN_REQUEST: requires a book ID as an int, person name as a
+	 * String, a Date from and an Optional<Date> to;
 	 * 
-	 * - MARK_BOOK_AS_RETURNED_REQUEST: requires a book ID as a String and a
-	 * Calendar, on which is returned;
+	 * - MARK_BOOK_AS_RETURNED_REQUEST: requires a book ID as an int and a Date, on
+	 * which is returned;
 	 * 
 	 * - SEARCH_REQUEST: requires a List<String>;
 	 * 
 	 * - SEARCH_RESPONSE: requires a List<Book>;
 	 * 
-	 * - IS_BOOK_TAKEN_REQUEST: requires a book ID as a String;
+	 * - IS_BOOK_TAKEN_REQUEST: requires a book ID as an int;
 	 * 
 	 * - IS_BOOK_TAKEN_RESPONSE: requires an Optional<String> containing the person,
 	 * who has taken the book;
@@ -66,6 +72,8 @@ public class Message implements Serializable {
 
 	public enum MessageType {
 		AUTHENTICATION_REQUEST, AUTHENTICATION_FAILED, AUTHENTICATION_SUCCESS,
+
+		REGISTER_REQUEST, REGISTER_FAILED, REGISTER_SUCCESS,
 
 		ADD_BOOK_REQUEST, DELETE_BOOK_REQUEST,
 

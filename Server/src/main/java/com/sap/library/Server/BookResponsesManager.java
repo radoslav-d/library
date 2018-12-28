@@ -1,6 +1,6 @@
 package com.sap.library.Server;
 
-import java.util.Calendar;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,19 +20,19 @@ public class BookResponsesManager implements BookManager {
 	}
 
 	@Override
-	public void deleteBook(String bookID) {
+	public void deleteBook(int bookId) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void markBookAsTaken(String bookID, String person, Calendar startDate, Optional<Calendar> endDate) {
+	public void markBookAsTaken(int bookId, String person, Date startDate, Optional<Date> endDate) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void markBookAsReturned(String bookID, Calendar dateReturned) {
+	public void markBookAsReturned(int bookId, Date dateReturned) {
 		// TODO Auto-generated method stub
 
 	}
@@ -44,7 +44,7 @@ public class BookResponsesManager implements BookManager {
 	}
 
 	@Override
-	public Optional<String> findIfBookIsTaken(String bookID) {
+	public Optional<String> findIfBookIsTaken(int bookId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

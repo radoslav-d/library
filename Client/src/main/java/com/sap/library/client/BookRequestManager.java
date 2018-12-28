@@ -2,7 +2,7 @@ package com.sap.library.client;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Calendar;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,23 +29,24 @@ public class BookRequestManager implements BookManager {
 	}
 
 	@Override
-	public void deleteBook(String bookID) {
-		MessageDeliverer.deliverMessage(writer, new Message(MessageType.DELETE_BOOK_REQUEST, bookID));
+	public void deleteBook(int bookId) {
+		MessageDeliverer.deliverMessage(writer, new Message(MessageType.DELETE_BOOK_REQUEST, bookId));
 	}
 
 	@Override
-	public void markBookAsTaken(String bookID, String person, Calendar startDate, Optional<Calendar> endDate) {
+	public void markBookAsTaken(int bookId, String person, Date startDate, Optional<Date> endDate) {
 		MessageDeliverer.deliverMessage(writer,
-				new Message(MessageType.MARK_BOOK_AS_TAKEN_REQUEST, bookID, person, startDate, endDate));
+				new Message(MessageType.MARK_BOOK_AS_TAKEN_REQUEST, bookId, person, startDate, endDate));
 	}
 
 	@Override
-	public void markBookAsReturned(String bookID, Calendar dateReturned) {
+	public void markBookAsReturned(int bookId, Date dateReturned) {
 		MessageDeliverer.deliverMessage(writer,
-				new Message(MessageType.MARK_BOOK_AS_RETURNED_REQUEST, bookID, dateReturned));
+				new Message(MessageType.MARK_BOOK_AS_RETURNED_REQUEST, bookId, dateReturned));
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<Book> searchBook(List<String> criteria) {
 		MessageDeliverer.deliverMessage(writer, new Message(MessageType.SEARCH_REQUEST, criteria));
 		Message message = MessageDeliverer.receiveMessage(reader);
@@ -57,8 +58,8 @@ public class BookRequestManager implements BookManager {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Optional<String> findIfBookIsTaken(String bookID) {
-		MessageDeliverer.deliverMessage(writer, new Message(MessageType.IS_BOOK_TAKEN_REQUEST, bookID));
+	public Optional<String> findIfBookIsTaken(int bookId) {
+		MessageDeliverer.deliverMessage(writer, new Message(MessageType.IS_BOOK_TAKEN_REQUEST, bookId));
 		Message message = MessageDeliverer.receiveMessage(reader);
 		if (!message.getType().equals(MessageType.IS_BOOK_TAKEN_RESPONSE)) {
 			throw new IllegalMessageTypeException(MessageType.IS_BOOK_TAKEN_RESPONSE, message.getType());
