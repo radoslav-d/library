@@ -19,7 +19,9 @@ import javafx.scene.layout.GridPane;
 
 /**
  * Constructs a Login Dialog, in which the user enters credentials as well as
- * network configs.
+ * network configs. The result of the Dialog is a map, where username, password,
+ * port, host and type of authentication are mapped to the values the user has
+ * entered.
  * 
  * @author Radoslav Dimitrov
  */
@@ -92,11 +94,6 @@ public class LoginDialog {
 		return this;
 	}
 
-	/**
-	 * Sets the radio buttons for network configuration.
-	 * 
-	 * @return the LoginDialog object for method chaining.
-	 */
 	private LoginDialog setConfigRadioButtons() {
 		defaultConfigButton.textProperty()
 				.bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "radiobutton.default"));

@@ -9,9 +9,6 @@ import com.sap.library.utilities.SocketFactory;
 import com.sap.library.utilities.exceptions.AuthenticationFailedException;
 import com.sap.library.utilities.exceptions.MessageNotSentException;
 import com.sap.library.utilities.exceptions.RegistrationFailedException;
-import com.sap.library.utilities.message.Message;
-import com.sap.library.utilities.message.Message.MessageType;
-import com.sap.library.utilities.message.MessageDeliverer;
 
 public class Controller implements Runnable {
 
@@ -71,7 +68,7 @@ public class Controller implements Runnable {
 	 * @throws RegistrationFailedException
 	 */
 	public void register(String username, String password) {
-		MessageDeliverer.deliverMessage(writer, new Message(MessageType.REGISTER_REQUEST, username, password));
+		authenticationHelper.register(username, password);
 		isAuthenticated = true;
 	}
 
