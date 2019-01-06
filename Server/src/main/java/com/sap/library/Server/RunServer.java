@@ -11,13 +11,15 @@ public class RunServer {
 	}
 
 	public static void main(String[] args) throws IOException, SQLException {
-		Controller controller = new Controller("");
+		Controller controller = new Controller(args[0]);
 		controller.start();
+
 		try (Scanner scanner = new Scanner(System.in)) {
 			while (!scanner.next().equalsIgnoreCase("stop")) {
 				controller.stop();
 			}
 		}
+
 	}
 
 }

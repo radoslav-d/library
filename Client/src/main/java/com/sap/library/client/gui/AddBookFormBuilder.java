@@ -4,6 +4,8 @@ import com.sap.library.client.BookRequestManager;
 import com.sap.library.utilities.Book;
 
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -21,7 +23,7 @@ public class AddBookFormBuilder {
 	private VBox vBox;
 
 	public AddBookFormBuilder(BookRequestManager bookManager) {
-		instantiateNodes().bindTextProperties().setAddBookButton(bookManager).setYearFieldSanitation().addNodesToVBox();
+		instantiateNodes().bindTextProperties().setAddBookButton(bookManager).setYearFieldSanitation().setVBox();
 	}
 
 	public Node getAddBookForm() {
@@ -40,12 +42,12 @@ public class AddBookFormBuilder {
 	}
 
 	private AddBookFormBuilder bindTextProperties() {
-		addBookLabel.textProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "stage.title"));
-		isbnField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "stage.title"));
-		titleField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "stage.title"));
-		authorField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "stage.title"));
-		yearField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "stage.title"));
-		addBookButton.textProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "stage.title"));
+		addBookLabel.textProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "label.addbook"));
+		isbnField.setPromptText("ISBN");
+		titleField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "label.title"));
+		authorField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "label.author"));
+		yearField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "label.year"));
+		addBookButton.textProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "label.addbook"));
 		return this;
 	}
 
@@ -84,8 +86,11 @@ public class AddBookFormBuilder {
 		return this;
 	}
 
-	private AddBookFormBuilder addNodesToVBox() {
+	private AddBookFormBuilder setVBox() {
 		vBox.getChildren().addAll(addBookLabel, isbnField, titleField, authorField, yearField, addBookButton);
+		vBox.setPadding(new Insets(20));
+		vBox.setSpacing(20);
+		vBox.setAlignment(Pos.CENTER);
 		return this;
 	}
 

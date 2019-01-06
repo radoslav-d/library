@@ -4,7 +4,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 
 import com.sap.library.utilities.Book;
 import com.sap.library.utilities.BookManager;
@@ -34,7 +33,7 @@ public class BookRequestManager implements BookManager {
 	}
 
 	@Override
-	public void markBookAsTaken(int bookId, String person, Date startDate, Optional<Date> endDate) {
+	public void markBookAsTaken(int bookId, String person, Date startDate, Date endDate) {
 		MessageDeliverer.deliverMessage(writer,
 				new Message(MessageType.MARK_BOOK_AS_TAKEN_REQUEST, bookId, person, startDate, endDate));
 	}
@@ -47,24 +46,13 @@ public class BookRequestManager implements BookManager {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Book> searchBook(List<String> criteria) {
+	public List<Book> searchBook(String criteria) {
 		MessageDeliverer.deliverMessage(writer, new Message(MessageType.SEARCH_REQUEST, criteria));
 		Message message = MessageDeliverer.receiveMessage(reader);
 		if (!message.getType().equals(MessageType.SEARCH_RESPONSE)) {
 			throw new IllegalMessageTypeException(MessageType.SEARCH_RESPONSE, message.getType());
 		}
 		return (List<Book>) message.getArgument(0);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Optional<String> findIfBookIsTaken(int bookId) {
-		MessageDeliverer.deliverMessage(writer, new Message(MessageType.IS_BOOK_TAKEN_REQUEST, bookId));
-		Message message = MessageDeliverer.receiveMessage(reader);
-		if (!message.getType().equals(MessageType.IS_BOOK_TAKEN_RESPONSE)) {
-			throw new IllegalMessageTypeException(MessageType.IS_BOOK_TAKEN_RESPONSE, message.getType());
-		}
-		return (Optional<String>) message.getArgument(0);
 	}
 
 	@SuppressWarnings("unchecked")

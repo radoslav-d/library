@@ -3,14 +3,23 @@ package com.sap.library.client;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.invoke.MethodHandles;
 import java.net.Socket;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sap.library.utilities.SocketFactory;
 import com.sap.library.utilities.exceptions.AuthenticationFailedException;
 import com.sap.library.utilities.exceptions.MessageNotSentException;
 import com.sap.library.utilities.exceptions.RegistrationFailedException;
+import com.sap.library.utilities.message.Message;
+import com.sap.library.utilities.message.Message.MessageType;
+import com.sap.library.utilities.message.MessageDeliverer;
 
-public class Controller implements Runnable {
+public class Controller {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private ObjectInputStream reader;
 	private ObjectOutputStream writer;
@@ -18,7 +27,6 @@ public class Controller implements Runnable {
 	private AuthenticationHelper authenticationHelper;
 	private BookRequestManager bookManager;
 	private boolean isAuthenticated;
-	private boolean isActive;
 
 	public Controller() throws IOException {
 		socket = SocketFactory.getNewSocket();
@@ -30,26 +38,6 @@ public class Controller implements Runnable {
 		construct();
 	}
 
-	public void start() {
-		if (!isAuthenticated) {
-			throw new IllegalStateException("User is not authenticated!");
-		}
-		isActive = true;
-		new Thread(this).start();
-	}
-
-	public void stop() {
-		isActive = false;
-	}
-
-	public void run() {
-		// TODO Auto-generated method stub
-		while (isActive) {
-			// TODO
-		}
-		endActivity();
-	}
-
 	/**
 	 * Authenticate the user.
 	 * 
@@ -57,7 +45,9 @@ public class Controller implements Runnable {
 	 * @throws AuthenticationFailedException
 	 */
 	public void authenticate(String username, String password) {
+		LOGGER.info("Trying to authenticate...");
 		authenticationHelper.authenticate(username, password);
+		LOGGER.info("Authenticated successfully");
 		isAuthenticated = true;
 	}
 
@@ -68,11 +58,16 @@ public class Controller implements Runnable {
 	 * @throws RegistrationFailedException
 	 */
 	public void register(String username, String password) {
+		LOGGER.info("Trying to register...");
 		authenticationHelper.register(username, password);
+		LOGGER.info("Registered successfully");
 		isAuthenticated = true;
 	}
 
 	public BookRequestManager getBookManager() {
+		if (!isAuthenticated) {
+			throw new IllegalStateException("User is not authenticated!");
+		}
 		return bookManager;
 	}
 
@@ -82,11 +77,12 @@ public class Controller implements Runnable {
 		authenticationHelper = new AuthenticationHelper(reader, writer);
 		bookManager = new BookRequestManager(reader, writer);
 		isAuthenticated = false;
-		isActive = false;
+		LOGGER.info("Client controller constructed successfully");
 	}
 
-	private void endActivity() {
+	public void close() {
 		try {
+			MessageDeliverer.deliverMessage(writer, new Message(MessageType.DISCONNECT_REQUEST));
 			writer.close();
 			reader.close();
 			socket.close();

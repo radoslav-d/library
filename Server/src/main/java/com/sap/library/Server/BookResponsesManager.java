@@ -1,58 +1,82 @@
 package com.sap.library.Server;
 
 import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.sap.library.utilities.Book;
 import com.sap.library.utilities.BookManager;
 
 public class BookResponsesManager implements BookManager {
 
-	public BookResponsesManager() {
-		// TODO Auto-generated constructor stub
+	private PostgreService postgreService;
+
+	public BookResponsesManager(PostgreService postgreService) {
+		this.postgreService = postgreService;
 	}
 
 	@Override
 	public void addBook(Book book) {
-		// TODO Auto-generated method stub
-
+		try {
+			postgreService.addBook(book);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void deleteBook(int bookId) {
-		// TODO Auto-generated method stub
+		try {
+			postgreService.deleteBook(bookId);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	@Override
-	public void markBookAsTaken(int bookId, String person, Date startDate, Optional<Date> endDate) {
-		// TODO Auto-generated method stub
-
+	public void markBookAsTaken(int bookId, String person, Date startDate, Date endDate) {
+		try {
+			postgreService.markBookAsTaken(bookId, person, startDate, endDate);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void markBookAsReturned(int bookId, Date dateReturned) {
-		// TODO Auto-generated method stub
-
+		try {
+			postgreService.markBookAsReturned(bookId, dateReturned);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public List<Book> searchBook(List<String> criteria) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Optional<String> findIfBookIsTaken(int bookId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Book> searchBook(String criteria) {
+		try {
+			return postgreService.searchBook(criteria);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 	@Override
 	public List<Book> getNotReturnedBooks() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return postgreService.getNotReturnedBooks();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 }

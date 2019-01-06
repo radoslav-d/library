@@ -1,14 +1,15 @@
 package com.sap.library.utilities;
 
+import java.io.Serializable;
 import java.sql.Date;
-import java.util.Optional;
 
 /**
  * Data Structure for Book.
  * 
  * @author Radoslav Dimitrov
  */
-public class Book {
+public class Book implements Serializable {
+	private static final long serialVersionUID = -5307663143516117576L;
 
 	private int id;
 	private String isbn;
@@ -16,7 +17,7 @@ public class Book {
 	private String author;
 	private int yearOfPublishing;
 	private boolean isTaken;
-	private Optional<String> takenBy;
+	private String takenBy;
 	private Date takenOn;
 	private Date returnedOn;
 
@@ -24,8 +25,8 @@ public class Book {
 		// default constructor
 	}
 
-	public Book(int id, String isbn, String title, String author, int yearOfPublishing, boolean isTaken,
-			Optional<String> takenBy, Date takenOn, Date returnedOn) {
+	public Book(int id, String isbn, String title, String author, int yearOfPublishing, boolean isTaken, String takenBy,
+			Date takenOn, Date returnedOn) {
 		setId(id);
 		setIsbn(isbn);
 		setTitle(title);
@@ -85,11 +86,11 @@ public class Book {
 		this.isTaken = isTaken;
 	}
 
-	public Optional<String> getTakenBy() {
+	public String getTakenBy() {
 		return takenBy;
 	}
 
-	public void setTakenBy(Optional<String> takenBy) {
+	public void setTakenBy(String takenBy) {
 		this.takenBy = takenBy;
 	}
 

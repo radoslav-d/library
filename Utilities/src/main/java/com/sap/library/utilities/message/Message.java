@@ -36,7 +36,7 @@ public class Message implements Serializable {
 	 * - MARK_BOOK_AS_RETURNED_REQUEST: requires a book ID as an int and a Date, on
 	 * which is returned;
 	 * 
-	 * - SEARCH_REQUEST: requires a List<String>;
+	 * - SEARCH_REQUEST: requires a String;
 	 * 
 	 * - SEARCH_RESPONSE: requires a List<Book>;
 	 * 
@@ -64,10 +64,10 @@ public class Message implements Serializable {
 	}
 
 	public Object getArgument(int index) {
-		if (index >= args.length || index <= 0) {
+		if (index >= args.length || index < 0) {
 			throw new IndexOutOfBoundsException();
 		}
-		return args;
+		return args[index];
 	}
 
 	public enum MessageType {
@@ -81,8 +81,8 @@ public class Message implements Serializable {
 
 		SEARCH_REQUEST, SEARCH_RESPONSE,
 
-		IS_BOOK_TAKEN_REQUEST, IS_BOOK_TAKEN_RESPONSE,
+		NOT_RETURNED_BOOKS_REQUEST, NOT_RETURNED_BOOKS_RESPONSE,
 
-		NOT_RETURNED_BOOKS_REQUEST, NOT_RETURNED_BOOKS_RESPONSE
+		DISCONNECT_REQUEST
 	}
 }

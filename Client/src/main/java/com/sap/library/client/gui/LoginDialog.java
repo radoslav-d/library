@@ -1,11 +1,11 @@
 package com.sap.library.client.gui;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -14,7 +14,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 /**
@@ -26,9 +25,6 @@ import javafx.scene.layout.GridPane;
  * @author Radoslav Dimitrov
  */
 public class LoginDialog {
-
-	private static final String EN_LANGUAGE_BUTTON_IMAGE_PATH = "src/main/resources/image-resources/en-lang.png";
-	private static final String BG_LANGUAGE_BUTTON_IMAGE_PATH = "src/main/resources/image-resources/bg-lang.png";
 
 	private Dialog<Map<String, String>> dialog;
 
@@ -50,8 +46,8 @@ public class LoginDialog {
 	private TextField hostTextField;
 	private TextField portTextField;
 
-	private ImageView enLangButton;
-	private ImageView bgLangButton;
+	private Node enLangButton;
+	private Node bgLangButton;
 
 	/**
 	 * Constructs the LoginDialog using fluent interface.
@@ -216,15 +212,8 @@ public class LoginDialog {
 	}
 
 	private LoginDialog setLanguageChangeButtons() {
-		enLangButton = new ImageView(new File(EN_LANGUAGE_BUTTON_IMAGE_PATH).toURI().toString());
-		bgLangButton = new ImageView(new File(BG_LANGUAGE_BUTTON_IMAGE_PATH).toURI().toString());
-		enLangButton.setFitHeight(30);
-		enLangButton.setFitWidth(30);
-		bgLangButton.setFitHeight(30);
-		bgLangButton.setFitWidth(30);
-		// changes the text in the GUI depending on the clicked image view
-		bgLangButton.setOnMouseClicked(event -> LocaleBinder.setLocale(LocaleBinder.BG_LOCALE));
-		enLangButton.setOnMouseClicked(event -> LocaleBinder.setLocale(LocaleBinder.EN_LOCALE));
+		enLangButton = LanguageButtons.getEnButton();
+		bgLangButton = LanguageButtons.getBgButton();
 		return this;
 	}
 

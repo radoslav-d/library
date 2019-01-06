@@ -1,15 +1,20 @@
 package com.sap.library.Server;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sap.library.utilities.SocketFactory;
 
 public class Controller implements Runnable {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 	private ServerSocket serverSocket;
 	private List<SocketHandler> socketHandlers;
@@ -30,17 +35,18 @@ public class Controller implements Runnable {
 	public void start() {
 		isActive = true;
 		new Thread(this).start();
+		LOGGER.info("Controller started...");
 	}
 
 	public void stop() {
 		isActive = false;
-		socketHandlers.stream().forEach(handler -> handler.stop());
+		socketHandlers.stream().forEach(SocketHandler::stop);
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.warn(e.getMessage());
 		}
+		LOGGER.info("Controller stopped");
 	}
 
 	public void run() {
@@ -58,23 +64,31 @@ public class Controller implements Runnable {
 			socketHandlers.add(handler);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 		}
 
 	}
 
 	public void authenticateUser(String username, String password) {
 		postgreService.authenticate(username, password);
+		LOGGER.info("User [" + username + "] authenticated");
 	}
 
 	public void registerUser(String username, String password) {
 		postgreService.registerUser(username, password);
+		LOGGER.info("User [" + username + "] registered");
+	}
+
+	public void removeHandler(SocketHandler handler) {
+		socketHandlers.remove(handler);
 	}
 
 	private void construct(String databaseUrl) throws SQLException {
+		LOGGER.info("Server started on port: " + serverSocket.getLocalPort());
 		socketHandlers = new ArrayList<>();
-		bookManager = new BookResponsesManager();
 		postgreService = new PostgreService(databaseUrl);
+		bookManager = new BookResponsesManager(postgreService);
+		LOGGER.info("Controller constructed successfully");
 	}
 
 }

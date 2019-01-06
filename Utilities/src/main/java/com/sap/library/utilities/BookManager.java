@@ -2,7 +2,6 @@ package com.sap.library.utilities;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface BookManager {
 
@@ -10,13 +9,11 @@ public interface BookManager {
 
 	void deleteBook(int bookId);
 
-	void markBookAsTaken(int bookId, String person, Date startDate, Optional<Date> endDate);
+	void markBookAsTaken(int bookId, String person, Date startDate, Date endDate);
 
 	void markBookAsReturned(int bookId, Date dateReturned);
 
-	List<Book> searchBook(List<String> criteria);
-
-	Optional<String> findIfBookIsTaken(int bookId);
+	List<Book> searchBook(String criteria);
 
 	List<Book> getNotReturnedBooks();
 }
