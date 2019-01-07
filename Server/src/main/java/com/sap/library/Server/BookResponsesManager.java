@@ -2,7 +2,6 @@ package com.sap.library.Server;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.sap.library.utilities.Book;
@@ -21,8 +20,7 @@ public class BookResponsesManager implements BookManager {
 		try {
 			postgreService.addBook(book);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataBaseException(e);
 		}
 	}
 
@@ -31,8 +29,7 @@ public class BookResponsesManager implements BookManager {
 		try {
 			postgreService.deleteBook(bookId);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataBaseException(e);
 		}
 
 	}
@@ -42,8 +39,7 @@ public class BookResponsesManager implements BookManager {
 		try {
 			postgreService.markBookAsTaken(bookId, person, startDate, endDate);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataBaseException(e);
 		}
 	}
 
@@ -52,8 +48,7 @@ public class BookResponsesManager implements BookManager {
 		try {
 			postgreService.markBookAsReturned(bookId, dateReturned);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DataBaseException(e);
 		}
 	}
 
@@ -62,9 +57,7 @@ public class BookResponsesManager implements BookManager {
 		try {
 			return postgreService.searchBook(criteria);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return new ArrayList<>();
+			throw new DataBaseException(e);
 		}
 	}
 
@@ -73,9 +66,7 @@ public class BookResponsesManager implements BookManager {
 		try {
 			return postgreService.getNotReturnedBooks();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return new ArrayList<>();
+			throw new DataBaseException(e);
 		}
 	}
 

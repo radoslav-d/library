@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sap.library.utilities.Book;
 import com.sap.library.utilities.exceptions.AuthenticationFailedException;
+import com.sap.library.utilities.exceptions.ConnectionInterruptedException;
 import com.sap.library.utilities.exceptions.IllegalMessageTypeException;
 import com.sap.library.utilities.exceptions.RegistrationFailedException;
 import com.sap.library.utilities.message.Message;
@@ -43,8 +44,12 @@ public class SocketHandler implements Runnable {
 		LOGGER.info("New socket handling thread started...");
 	}
 
-	public void stop() {
+	public synchronized void stop() {
 		isActive = false;
+	}
+
+	private void stopAndRemoveReferenceFromController() {
+		stop();
 		controller.removeHandler(this);
 	}
 
@@ -54,8 +59,10 @@ public class SocketHandler implements Runnable {
 			while (isActive) {
 				processRequests();
 			}
-		} catch (IllegalMessageTypeException e) {
-			// TODO
+		} catch (ConnectionInterruptedException e) {
+			stopAndRemoveReferenceFromController();
+		} catch (IllegalMessageTypeException | DataBaseException e) {
+			MessageDeliverer.deliverMessage(writer, new Message(MessageType.DISCONNECT_REQUEST));
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
@@ -133,8 +140,9 @@ public class SocketHandler implements Runnable {
 			MessageDeliverer.deliverMessage(writer, new Message(MessageType.SEARCH_RESPONSE, resultOfSearch));
 			break;
 		case DISCONNECT_REQUEST:
-			stop();
-			break;
+			stopAndRemoveReferenceFromController();
+			isActive = false;
+			controller.removeHandler(this);
 		default:
 			throw new IllegalMessageTypeException("Expected Request MessageType but got " + message.getType());
 		}

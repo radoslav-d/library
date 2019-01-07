@@ -40,7 +40,7 @@ public class Controller implements Runnable {
 
 	public void stop() {
 		isActive = false;
-		socketHandlers.stream().forEach(SocketHandler::stop);
+		socketHandlers.forEach(SocketHandler::stop);
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
@@ -61,9 +61,10 @@ public class Controller implements Runnable {
 			Socket socket = serverSocket.accept();
 			SocketHandler handler = new SocketHandler(socket, this, bookManager);
 			handler.start();
-			socketHandlers.add(handler);
+			synchronized (socketHandlers) {
+				socketHandlers.add(handler);
+			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
 		}
 

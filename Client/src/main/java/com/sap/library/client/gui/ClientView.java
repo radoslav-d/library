@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.sap.library.client.BookRequestManager;
 import com.sap.library.client.Controller;
 import com.sap.library.utilities.exceptions.AuthenticationFailedException;
+import com.sap.library.utilities.exceptions.ConnectionInterruptedException;
 import com.sap.library.utilities.exceptions.MessageNotSentException;
 import com.sap.library.utilities.exceptions.RegistrationFailedException;
 
@@ -51,6 +52,8 @@ public class ClientView extends Application {
 			primaryStage.titleProperty().bind(LocaleBinder.createStringBinding(BASE_NAME, "stage.title"));
 			primaryStage.setOnCloseRequest(event -> stop());
 			primaryStage.show();
+		} catch (ConnectionInterruptedException e) {
+			errorAlert("", true);
 		} catch (MessageNotSentException e) {
 			LOGGER.error(e.getMessage(), e);
 			errorAlert(e.getMessage(), false);
@@ -60,8 +63,12 @@ public class ClientView extends Application {
 
 	@Override
 	public void stop() {
-		if (controller != null) {
-			controller.close();
+		try {
+			if (controller != null) {
+				controller.close();
+			}
+		} catch (IOException | MessageNotSentException e) {
+			LOGGER.warn(e.getMessage());
 		}
 	}
 

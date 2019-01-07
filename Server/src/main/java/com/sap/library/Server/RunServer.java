@@ -11,15 +11,20 @@ public class RunServer {
 	}
 
 	public static void main(String[] args) throws IOException, SQLException {
+
+		if (args.length == 0) {
+			throw new IllegalArgumentException("Need to set database URL");
+		}
+
 		Controller controller = new Controller(args[0]);
 		controller.start();
 
 		try (Scanner scanner = new Scanner(System.in)) {
 			while (!scanner.next().equalsIgnoreCase("stop")) {
-				controller.stop();
+				// wait for user to enter stop
 			}
+			controller.stop();
 		}
-
 	}
 
 }

@@ -80,15 +80,11 @@ public class Controller {
 		LOGGER.info("Client controller constructed successfully");
 	}
 
-	public void close() {
-		try {
-			MessageDeliverer.deliverMessage(writer, new Message(MessageType.DISCONNECT_REQUEST));
-			writer.close();
-			reader.close();
-			socket.close();
-		} catch (IOException e) {
-			throw new IllegalStateException(e);
-		}
+	public void close() throws IOException {
+		MessageDeliverer.deliverMessage(writer, new Message(MessageType.DISCONNECT_REQUEST));
+		writer.close();
+		reader.close();
+		socket.close();
 	}
 
 }

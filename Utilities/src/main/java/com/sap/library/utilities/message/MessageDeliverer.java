@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import com.sap.library.utilities.exceptions.ConnectionInterruptedException;
 import com.sap.library.utilities.exceptions.MessageNotSentException;
+import com.sap.library.utilities.message.Message.MessageType;
 
 public class MessageDeliverer {
 
@@ -22,7 +24,11 @@ public class MessageDeliverer {
 
 	public static Message receiveMessage(ObjectInputStream reader) {
 		try {
-			return (Message) reader.readObject();
+			Message message = (Message) reader.readObject();
+			if (message.getType().equals(MessageType.DISCONNECT_REQUEST)) {
+				throw new ConnectionInterruptedException();
+			}
+			return message;
 		} catch (ClassNotFoundException | IOException e) {
 			throw new MessageNotSentException(e);
 		}
