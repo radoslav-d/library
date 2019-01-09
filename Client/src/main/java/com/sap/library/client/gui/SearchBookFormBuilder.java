@@ -166,9 +166,9 @@ public class SearchBookFormBuilder {
 		int spacesToAdd = symbols - text.length();
 		if (spacesToAdd > 0) {
 			String formatted = String.format("%s%" + spacesToAdd + "s", text, "");
-			return new Text(formatted + " ||");
+			return new Text(formatted);
 		}
-		return new Text(text + " ||");
+		return new Text(text);
 	}
 
 	private Text getNotTakenText() {

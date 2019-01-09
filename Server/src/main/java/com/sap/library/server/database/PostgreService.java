@@ -50,7 +50,7 @@ public class PostgreService implements DataBaseService {
 		connection.close();
 	}
 
-	public void addBook(Book book) throws SQLException {
+	public synchronized void addBook(Book book) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_BOOK)) {
 			preparedStatement.setString(1, book.getIsbn());
 			preparedStatement.setString(2, book.getTitle());
@@ -60,14 +60,15 @@ public class PostgreService implements DataBaseService {
 		}
 	}
 
-	public void deleteBook(int bookId) throws SQLException {
+	public synchronized void deleteBook(int bookId) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BOOK_BY_ID)) {
 			preparedStatement.setInt(1, bookId);
 			preparedStatement.executeUpdate();
 		}
 	}
 
-	public void markBookAsTaken(int bookId, String person, Date startDate, Date endDate) throws SQLException {
+	public synchronized void markBookAsTaken(int bookId, String person, Date startDate, Date endDate)
+			throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(MARK_BOOK_AS_TAKEN)) {
 			preparedStatement.setString(1, person);
 			preparedStatement.setDate(2, startDate);
@@ -77,7 +78,7 @@ public class PostgreService implements DataBaseService {
 		}
 	}
 
-	public void markBookAsReturned(int bookId, Date returnDate) throws SQLException {
+	public synchronized void markBookAsReturned(int bookId, Date returnDate) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(MARK_BOOK_AS_RETURNED)) {
 			preparedStatement.setDate(1, returnDate);
 			preparedStatement.setInt(2, bookId);
@@ -85,7 +86,7 @@ public class PostgreService implements DataBaseService {
 		}
 	}
 
-	public List<Book> searchBook(String criteria) throws SQLException {
+	public synchronized List<Book> searchBook(String criteria) throws SQLException {
 		if (criteria.matches("^[0-9]*$") && criteria.length() < 7) {
 			return searchWithOutAlphaNumericalCriteria(criteria);
 		}
@@ -120,7 +121,7 @@ public class PostgreService implements DataBaseService {
 		}
 	}
 
-	public List<Book> getNotReturnedBooks() throws SQLException {
+	public synchronized List<Book> getNotReturnedBooks() throws SQLException {
 		try (Statement statement = connection.createStatement();
 				ResultSet results = statement.executeQuery(FIND_TAKEN_BOOKS)) {
 			return toListOfBooks(results);

@@ -16,6 +16,7 @@ import com.sap.library.utilities.Book;
 import com.sap.library.utilities.exceptions.AuthenticationFailedException;
 import com.sap.library.utilities.exceptions.ConnectionInterruptedException;
 import com.sap.library.utilities.exceptions.IllegalMessageTypeException;
+import com.sap.library.utilities.exceptions.MessageNotSentException;
 import com.sap.library.utilities.exceptions.RegistrationFailedException;
 import com.sap.library.utilities.message.Message;
 import com.sap.library.utilities.message.Message.MessageType;
@@ -51,11 +52,6 @@ public class SocketHandler implements Runnable {
 		isActive = false;
 	}
 
-	private void stopAndRemoveReferenceFromController() {
-		stop();
-		controller.removeHandler(this);
-	}
-
 	public void run() {
 		try {
 			authenticate();
@@ -64,6 +60,8 @@ public class SocketHandler implements Runnable {
 			}
 		} catch (ConnectionInterruptedException e) {
 			stopAndRemoveReferenceFromController();
+		} catch (MessageNotSentException e) {
+			LOGGER.error(e.getMessage(), e);
 		} catch (IllegalMessageTypeException | DataBaseException e) {
 			MessageDeliverer.deliverMessage(writer, new Message(MessageType.DISCONNECT_REQUEST));
 			LOGGER.error(e.getMessage(), e);
@@ -80,10 +78,10 @@ public class SocketHandler implements Runnable {
 		String username = (String) message.getArgument(0);
 		String password = (String) message.getArgument(1);
 		if (type.equals(MessageType.AUTHENTICATION_REQUEST)) {
-			LOGGER.info("Trying to authenticate user [" + username + "]...");
+			LOGGER.info("Trying to authenticate user [{}]...", username);
 			sendResponseToAuthentication(username, password);
 		} else {
-			LOGGER.info("Trying to register user [" + username + "]...");
+			LOGGER.info("Trying to register user [{}]...", username);
 			sendResponseToRegistration(username, password);
 		}
 	}
@@ -110,46 +108,72 @@ public class SocketHandler implements Runnable {
 
 	private void processRequests() {
 		Message message = MessageDeliverer.receiveMessage(reader);
-		LOGGER.info("New [" + message.getType() + "] received");
+		LOGGER.info("New [{}] received", message.getType());
 		switch (message.getType()) {
 		case ADD_BOOK_REQUEST:
-			Book book = (Book) message.getArgument(0);
-			bookManager.addBook(book);
+			processAddBook(message);
 			break;
 		case DELETE_BOOK_REQUEST:
-			int bookToDelete = (int) message.getArgument(0);
-			bookManager.deleteBook(bookToDelete);
+			processDeleteBook(message);
 			break;
 		case MARK_BOOK_AS_RETURNED_REQUEST:
-			int bookReturned = (int) message.getArgument(0);
-			Date returnedOn = (Date) message.getArgument(1);
-			bookManager.markBookAsReturned(bookReturned, returnedOn);
+			processMarkBookAsReturned(message);
 			break;
 		case MARK_BOOK_AS_TAKEN_REQUEST:
-			int bookTaken = (int) message.getArgument(0);
-			String person = (String) message.getArgument(1);
-			Date from = (Date) message.getArgument(2);
-			Date to = (Date) message.getArgument(3);
-			bookManager.markBookAsTaken(bookTaken, person, from, to);
+			processMarkBookAsTaken(message);
 			break;
 		case NOT_RETURNED_BOOKS_REQUEST:
-			List<Book> notReturnedBooks = bookManager.getNotReturnedBooks();
-			MessageDeliverer.deliverMessage(writer,
-					new Message(MessageType.NOT_RETURNED_BOOKS_RESPONSE, notReturnedBooks));
+			processNotReturnedBooks();
 			break;
 		case SEARCH_REQUEST:
-			String criteria = (String) message.getArgument(0);
-			List<Book> resultOfSearch = bookManager.searchBook(criteria);
-			MessageDeliverer.deliverMessage(writer, new Message(MessageType.SEARCH_RESPONSE, resultOfSearch));
+			processSearch(message);
 			break;
 		case DISCONNECT_REQUEST:
 			stopAndRemoveReferenceFromController();
-			isActive = false;
-			controller.removeHandler(this);
 			break;
 		default:
 			throw new IllegalMessageTypeException("Expected Request MessageType but got " + message.getType());
 		}
+	}
+
+	private void processAddBook(Message message) {
+		Book book = (Book) message.getArgument(0);
+		bookManager.addBook(book);
+	}
+
+	private void processDeleteBook(Message message) {
+		int bookToDelete = (int) message.getArgument(0);
+		bookManager.deleteBook(bookToDelete);
+	}
+
+	private void processMarkBookAsReturned(Message message) {
+		int bookReturned = (int) message.getArgument(0);
+		Date returnedOn = (Date) message.getArgument(1);
+		bookManager.markBookAsReturned(bookReturned, returnedOn);
+	}
+
+	private void processMarkBookAsTaken(Message message) {
+		int bookTaken = (int) message.getArgument(0);
+		String person = (String) message.getArgument(1);
+		Date from = (Date) message.getArgument(2);
+		Date to = (Date) message.getArgument(3);
+		bookManager.markBookAsTaken(bookTaken, person, from, to);
+	}
+
+	private void processNotReturnedBooks() {
+		List<Book> notReturnedBooks = bookManager.getNotReturnedBooks();
+		MessageDeliverer.deliverMessage(writer, new Message(MessageType.NOT_RETURNED_BOOKS_RESPONSE, notReturnedBooks));
+	}
+
+	private void processSearch(Message message) {
+		String criteria = (String) message.getArgument(0);
+		List<Book> resultOfSearch = bookManager.searchBook(criteria);
+		MessageDeliverer.deliverMessage(writer, new Message(MessageType.SEARCH_RESPONSE, resultOfSearch));
+	}
+
+	private void stopAndRemoveReferenceFromController() {
+		stop();
+		controller.removeHandler(this);
 	}
 
 }

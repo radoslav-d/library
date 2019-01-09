@@ -78,12 +78,12 @@ public class Controller implements Runnable {
 
 	public void authenticateUser(String username, String password) {
 		authenticationService.authenticateUser(username, password);
-		LOGGER.info("User [" + username + "] authenticated");
+		LOGGER.info("User [{}] authenticated", username);
 	}
 
 	public void registerUser(String username, String password) {
 		authenticationService.registerUser(username, password);
-		LOGGER.info("User [" + username + "] registered");
+		LOGGER.info("User [{}] registered", username);
 	}
 
 	public synchronized void removeHandler(SocketHandler handler) {
@@ -91,7 +91,7 @@ public class Controller implements Runnable {
 	}
 
 	private void construct(String databaseUrl) throws SQLException {
-		LOGGER.info("Server started on port: " + serverSocket.getLocalPort());
+		LOGGER.info("Server started on port: {}", serverSocket.getLocalPort());
 		socketHandlers = new ArrayList<>();
 		postgreService = new PostgreService(databaseUrl);
 		authenticationService = new AuthenticationService(postgreService.getConnection());

@@ -22,7 +22,7 @@ public class AuthenticationService implements DataBaseService {
 		this.connection = connection;
 	}
 
-	public void authenticateUser(String username, String password) {
+	public synchronized void authenticateUser(String username, String password) {
 		try (ResultSet result = fetchUser(username)) {
 			if (!result.next()) {
 				throw new AuthenticationFailedException("There is no such user!");
@@ -36,7 +36,7 @@ public class AuthenticationService implements DataBaseService {
 		}
 	}
 
-	public void registerUser(String username, String password) {
+	public synchronized void registerUser(String username, String password) {
 		try (ResultSet result = fetchUser(username)) {
 			if (result.next()) {
 				throw new RegistrationFailedException("There is already an user with the same username");
@@ -54,7 +54,7 @@ public class AuthenticationService implements DataBaseService {
 		}
 	}
 
-	private ResultSet fetchUser(String username) throws SQLException {
+	private synchronized ResultSet fetchUser(String username) throws SQLException {
 		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER);
 		preparedStatement.setString(1, username);
 		return preparedStatement.executeQuery();
