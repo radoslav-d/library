@@ -55,7 +55,7 @@ public class AuthenticationService implements DataBaseService {
 	}
 
 	private synchronized ResultSet fetchUser(String username) throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER);
+		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER); // NOSONAR
 		preparedStatement.setString(1, username);
 		return preparedStatement.executeQuery();
 	}

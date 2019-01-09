@@ -67,8 +67,7 @@ public class PostgreService implements DataBaseService {
 		}
 	}
 
-	public synchronized void markBookAsTaken(int bookId, String person, Date startDate, Date endDate)
-			throws SQLException {
+	public synchronized void markBookAsTaken(int bookId, String person, Date startDate, Date endDate) throws SQLException {
 		try (PreparedStatement preparedStatement = connection.prepareStatement(MARK_BOOK_AS_TAKEN)) {
 			preparedStatement.setString(1, person);
 			preparedStatement.setDate(2, startDate);

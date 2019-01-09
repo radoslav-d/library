@@ -40,7 +40,7 @@ public class SearchBookFormBuilder {
 
 	private SearchBookFormBuilder setSearchResults(BookRequestManager bookManager) {
 		searchResults = new ListView<>();
-		searchResults.setCellFactory(book -> new ListCell<Book>() {
+		searchResults.setCellFactory(book -> new ListCell<Book>() { // NOSONAR
 			@Override
 			protected void updateItem(Book item, boolean empty) {
 				super.updateItem(item, empty);
@@ -165,7 +165,7 @@ public class SearchBookFormBuilder {
 	private Text formatAsTextNode(String text, int symbols) {
 		int spacesToAdd = symbols - text.length();
 		if (spacesToAdd > 0) {
-			String formatted = String.format("%s%" + spacesToAdd + "s", text, "");
+			String formatted = String.format("%s%" + spacesToAdd + "s", text, ""); // NOSONAR
 			return new Text(formatted);
 		}
 		return new Text(text);
