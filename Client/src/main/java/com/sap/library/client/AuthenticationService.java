@@ -15,12 +15,12 @@ import com.sap.library.utilities.message.MessageDeliverer;
  * 
  * @author Radoslav Dimitrov
  */
-public class AuthenticationHelper {
+public class AuthenticationService {
 
 	private ObjectInputStream reader;
 	private ObjectOutputStream writer;
 
-	public AuthenticationHelper(ObjectInputStream reader, ObjectOutputStream writer) {
+	public AuthenticationService(ObjectInputStream reader, ObjectOutputStream writer) {
 		this.reader = reader;
 		this.writer = writer;
 	}
@@ -54,7 +54,7 @@ public class AuthenticationHelper {
 	private void receiveRegistrationResponse() {
 		Message response = MessageDeliverer.receiveMessage(reader);
 		if (!response.getType().equals(MessageType.REGISTER_SUCCESS)) {
-			throw new RegistrationFailedException("Registration Failed! Your username is already taken.");
+			throw new RegistrationFailedException("Registration Failed! Your username might be already taken.");
 		}
 	}
 }

@@ -24,7 +24,7 @@ import javafx.scene.layout.GridPane;
  * 
  * @author Radoslav Dimitrov
  */
-public class LoginDialog {
+public class LoginDialogBuilder {
 
 	private Dialog<Map<String, String>> dialog;
 
@@ -52,7 +52,7 @@ public class LoginDialog {
 	/**
 	 * Constructs the LoginDialog using fluent interface.
 	 */
-	public LoginDialog() {
+	public LoginDialogBuilder() {
 		setDialogAndButtons().instantiateNodes().setUsernameTextField().setPasswordTextField().setConfigRadioButtons()
 				.setAuthenticationRadioButtons().setAuthenticationInput().setAdvancedSettingsInput()
 				.setLanguageChangeButtons().setGridPane().setDialogResultConverter();
@@ -62,7 +62,7 @@ public class LoginDialog {
 		return dialog;
 	}
 
-	private LoginDialog setDialogAndButtons() {
+	private LoginDialogBuilder setDialogAndButtons() {
 		dialog = new Dialog<>();
 		dialog.titleProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "button.login"));
 		dialog.getDialogPane().setPrefSize(800, 200);
@@ -75,14 +75,14 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setUsernameTextField() {
+	private LoginDialogBuilder setUsernameTextField() {
 		usernameTextField.promptTextProperty()
 				.bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "username.prompt"));
 		usernameTextField.textProperty().addListener((observable, oldValue, newValue) -> refreshLoginButtonStatus());
 		return this;
 	}
 
-	private LoginDialog setPasswordTextField() {
+	private LoginDialogBuilder setPasswordTextField() {
 		passwordTextField = new PasswordField();
 		passwordTextField.promptTextProperty()
 				.bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "password.prompt"));
@@ -90,7 +90,7 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setConfigRadioButtons() {
+	private LoginDialogBuilder setConfigRadioButtons() {
 		defaultConfigButton.textProperty()
 				.bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "radiobutton.default"));
 		defaultConfigButton.setToggleGroup(configRadioButtonsGroup);
@@ -101,7 +101,7 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setAuthenticationRadioButtons() {
+	private LoginDialogBuilder setAuthenticationRadioButtons() {
 		loginRadioButton.textProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "button.login"));
 		loginRadioButton.setToggleGroup(authenticationRadioButtonsGroup);
 		loginRadioButton.setSelected(true);
@@ -111,7 +111,7 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setAuthenticationInput() {
+	private LoginDialogBuilder setAuthenticationInput() {
 		repeatPasswordTextField.setVisible(false);
 		repeatPasswordTextField.promptTextProperty()
 				.bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "repeatpassword.prompt"));
@@ -131,7 +131,7 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setAdvancedSettingsInput() {
+	private LoginDialogBuilder setAdvancedSettingsInput() {
 		setHostTextField();
 		setPortTextField();
 		// sets text fields visible depending on the chosen radio button
@@ -144,14 +144,14 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setHostTextField() {
+	private LoginDialogBuilder setHostTextField() {
 		hostTextField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "host.prompt"));
 		hostTextField.setVisible(false);
 		hostTextField.textProperty().addListener((observable, oldValue, newValue) -> refreshLoginButtonStatus());
 		return this;
 	}
 
-	private LoginDialog setPortTextField() {
+	private LoginDialogBuilder setPortTextField() {
 		portTextField.promptTextProperty().bind(LocaleBinder.createStringBinding(ClientView.BASE_NAME, "port.prompt"));
 		portTextField.setVisible(false);
 		// permits non-digit input in the port text field
@@ -164,7 +164,7 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setDialogResultConverter() {
+	private LoginDialogBuilder setDialogResultConverter() {
 		dialog.setResultConverter(dialogButton -> {
 			if (dialogButton.equals(ButtonType.OK)) {
 				Map<String, String> results = new HashMap<>();
@@ -189,7 +189,7 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setGridPane() {
+	private LoginDialogBuilder setGridPane() {
 		GridPane grid = new GridPane();
 		dialog.getDialogPane().setContent(grid);
 		grid.setVgap(20);
@@ -211,13 +211,13 @@ public class LoginDialog {
 		return this;
 	}
 
-	private LoginDialog setLanguageChangeButtons() {
+	private LoginDialogBuilder setLanguageChangeButtons() {
 		enLangButton = LanguageButtons.getEnButton();
 		bgLangButton = LanguageButtons.getBgButton();
 		return this;
 	}
 
-	private LoginDialog instantiateNodes() {
+	private LoginDialogBuilder instantiateNodes() {
 		usernameTextField = new TextField();
 		passwordTextField = new PasswordField();
 		repeatPasswordTextField = new PasswordField();

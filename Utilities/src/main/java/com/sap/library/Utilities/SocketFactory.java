@@ -31,7 +31,8 @@ public class SocketFactory {
 	 * Seeks the ServerSocket on the localhost from port 7000 to 7020.
 	 * 
 	 * @return - a Socket instance.
-	 * @throws IOException if unable to find the ServerSocket.
+	 * @throws IOException
+	 *             if unable to find the ServerSocket.
 	 */
 	public static Socket getNewSocket() throws IOException {
 		for (int port = FIRST_PORT; port <= LAST_PORT; port++) {
@@ -41,14 +42,16 @@ public class SocketFactory {
 				// Try the next port
 			}
 		}
-		throw new IOException("No ServerSocket running on ports range 7000 - 7020.");
+		throw new IOException("No Server running on ports range 7000 - 7020.");
 	}
 
 	/**
-	 * Finds an empty port (from 7000 to 7020) and returns an instance of SocketServer.
+	 * Finds an empty port (from 7000 to 7020) and returns an instance of
+	 * SocketServer.
 	 * 
 	 * @return - an instance of SocketServer.
-	 * @throws IOException - if there is no empty port.
+	 * @throws IOException
+	 *             - if there is no empty port.
 	 */
 	public static ServerSocket getNewServerSocket() throws IOException {
 		for (int port = FIRST_PORT; port <= LAST_PORT; port++) {

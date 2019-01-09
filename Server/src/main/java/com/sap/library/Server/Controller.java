@@ -1,4 +1,4 @@
-package com.sap.library.Server;
+package com.sap.library.server;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -11,6 +11,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sap.library.server.database.AuthenticationService;
+import com.sap.library.server.database.PostgreService;
 import com.sap.library.utilities.SocketFactory;
 
 public class Controller implements Runnable {
@@ -20,6 +22,7 @@ public class Controller implements Runnable {
 	private List<SocketHandler> socketHandlers;
 	private BookResponsesManager bookManager;
 	private PostgreService postgreService;
+	private AuthenticationService authenticationService;
 	private boolean isActive;
 
 	public Controller(String databaseUrl) throws IOException, SQLException {
@@ -33,6 +36,9 @@ public class Controller implements Runnable {
 	}
 
 	public void start() {
+		if (isActive) {
+			throw new IllegalThreadStateException();
+		}
 		isActive = true;
 		new Thread(this).start();
 		LOGGER.info("Controller started...");
@@ -42,28 +48,28 @@ public class Controller implements Runnable {
 		isActive = false;
 		socketHandlers.forEach(SocketHandler::stop);
 		try {
+			postgreService.close();
 			serverSocket.close();
-		} catch (IOException e) {
+		} catch (IOException | SQLException e) {
 			LOGGER.warn(e.getMessage());
 		}
 		LOGGER.info("Controller stopped");
 	}
 
-	public void run() {
+	@Override
+	public synchronized void run() {
 		while (isActive) {
 			acceptClients();
 		}
-
 	}
 
 	private void acceptClients() {
 		try {
+			LOGGER.info("Listening for connections...");
 			Socket socket = serverSocket.accept();
 			SocketHandler handler = new SocketHandler(socket, this, bookManager);
 			handler.start();
-			synchronized (socketHandlers) {
-				socketHandlers.add(handler);
-			}
+			addHandlerToList(handler);
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -71,16 +77,16 @@ public class Controller implements Runnable {
 	}
 
 	public void authenticateUser(String username, String password) {
-		postgreService.authenticate(username, password);
+		authenticationService.authenticateUser(username, password);
 		LOGGER.info("User [" + username + "] authenticated");
 	}
 
 	public void registerUser(String username, String password) {
-		postgreService.registerUser(username, password);
+		authenticationService.registerUser(username, password);
 		LOGGER.info("User [" + username + "] registered");
 	}
 
-	public void removeHandler(SocketHandler handler) {
+	public synchronized void removeHandler(SocketHandler handler) {
 		socketHandlers.remove(handler);
 	}
 
@@ -88,8 +94,19 @@ public class Controller implements Runnable {
 		LOGGER.info("Server started on port: " + serverSocket.getLocalPort());
 		socketHandlers = new ArrayList<>();
 		postgreService = new PostgreService(databaseUrl);
+		authenticationService = new AuthenticationService(postgreService.getConnection());
 		bookManager = new BookResponsesManager(postgreService);
+		isActive = false;
 		LOGGER.info("Controller constructed successfully");
+	}
+
+	private void addHandlerToList(SocketHandler handler) {
+		// add is done in a new thread because synchronized block may block the server
+		new Thread(() -> {
+			synchronized (socketHandlers) {
+				socketHandlers.add(handler);
+			}
+		}).start();
 	}
 
 }

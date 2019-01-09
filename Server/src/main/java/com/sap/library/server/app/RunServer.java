@@ -1,8 +1,10 @@
-package com.sap.library.Server;
+package com.sap.library.server.app;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import com.sap.library.server.Controller;
 
 public class RunServer {
 

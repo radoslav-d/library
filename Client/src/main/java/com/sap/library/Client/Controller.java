@@ -24,7 +24,7 @@ public class Controller {
 	private ObjectInputStream reader;
 	private ObjectOutputStream writer;
 	private Socket socket;
-	private AuthenticationHelper authenticationHelper;
+	private AuthenticationService authenticationHelper;
 	private BookRequestManager bookManager;
 	private boolean isAuthenticated;
 
@@ -74,7 +74,7 @@ public class Controller {
 	private void construct() throws IOException {
 		writer = new ObjectOutputStream(socket.getOutputStream());
 		reader = new ObjectInputStream(socket.getInputStream());
-		authenticationHelper = new AuthenticationHelper(reader, writer);
+		authenticationHelper = new AuthenticationService(reader, writer);
 		bookManager = new BookRequestManager(reader, writer);
 		isAuthenticated = false;
 		LOGGER.info("Client controller constructed successfully");
@@ -82,8 +82,8 @@ public class Controller {
 
 	public void close() throws IOException {
 		MessageDeliverer.deliverMessage(writer, new Message(MessageType.DISCONNECT_REQUEST));
-		writer.close();
 		reader.close();
+		writer.close();
 		socket.close();
 	}
 

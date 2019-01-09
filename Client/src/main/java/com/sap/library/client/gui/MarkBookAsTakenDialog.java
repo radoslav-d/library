@@ -88,10 +88,8 @@ public class MarkBookAsTakenDialog {
 	private MarkBookAsTakenDialog setResultConverter(Book book) {
 		dialog.setResultConverter(dialogButton -> {
 			if (dialogButton.equals(ButtonType.OK)) {
-				book.setTaken(true);
-				book.setTakenBy(userField.getText().trim());
-				book.setTakenOn(new Date(dateTaken.getValue().toEpochDay() * 86400000));
-				book.setReturnedOn(new Date(dateReturned.getValue().toEpochDay() * 86400000));
+				book.markBookAsTaken(userField.getText().trim(), new Date(dateTaken.getValue().toEpochDay() * 86400000),
+						new Date(dateReturned.getValue().toEpochDay() * 86400000));
 				return book;
 			}
 			return null;

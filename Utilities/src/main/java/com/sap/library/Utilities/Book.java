@@ -110,4 +110,16 @@ public class Book implements Serializable {
 		this.returnedOn = returnedOn;
 	}
 
+	public void markAsReturned() {
+		setTaken(false);
+		setReturnedOn(new Date(System.currentTimeMillis()));
+		setTakenBy("");
+	}
+
+	public void markBookAsTaken(String takenBy, Date from, Date to) {
+		setTaken(true);
+		setTakenBy(takenBy);
+		setTakenOn(from);
+		setReturnedOn(to);
+	}
 }

@@ -47,8 +47,7 @@ public class PasswordUtils {
 		return hashOfInput.equals(saltAndHash[1]);
 	}
 
-	// using PBKDF2 from Sun, an alternative is https://github.com/wg/scrypt
-	// cf. http://www.unlimitednovelty.com/2012/03/dont-use-bcrypt.html
+	// using PBKDF2 from Sun
 	private static String hash(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
 		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 		SecretKey key = factory

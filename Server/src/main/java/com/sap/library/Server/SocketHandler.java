@@ -1,4 +1,4 @@
-package com.sap.library.Server;
+package com.sap.library.server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,6 +11,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sap.library.server.database.DataBaseException;
 import com.sap.library.utilities.Book;
 import com.sap.library.utilities.exceptions.AuthenticationFailedException;
 import com.sap.library.utilities.exceptions.ConnectionInterruptedException;
@@ -39,9 +40,11 @@ public class SocketHandler implements Runnable {
 	}
 
 	public void start() {
-		isActive = true;
-		new Thread(this).start();
-		LOGGER.info("New socket handling thread started...");
+		if (!isActive) {
+			isActive = true;
+			new Thread(this).start();
+			LOGGER.info("New socket handling thread started...");
+		}
 	}
 
 	public synchronized void stop() {
@@ -143,6 +146,7 @@ public class SocketHandler implements Runnable {
 			stopAndRemoveReferenceFromController();
 			isActive = false;
 			controller.removeHandler(this);
+			break;
 		default:
 			throw new IllegalMessageTypeException("Expected Request MessageType but got " + message.getType());
 		}

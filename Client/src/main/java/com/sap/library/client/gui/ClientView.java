@@ -52,9 +52,7 @@ public class ClientView extends Application {
 			primaryStage.titleProperty().bind(LocaleBinder.createStringBinding(BASE_NAME, "stage.title"));
 			primaryStage.setOnCloseRequest(event -> stop());
 			primaryStage.show();
-		} catch (ConnectionInterruptedException e) {
-			errorAlert("", true);
-		} catch (MessageNotSentException e) {
+		} catch (MessageNotSentException | ConnectionInterruptedException e) {
 			LOGGER.error(e.getMessage(), e);
 			errorAlert(e.getMessage(), false);
 			Platform.exit();
@@ -73,7 +71,7 @@ public class ClientView extends Application {
 	}
 
 	private boolean authenticate() {
-		LoginDialog dialog = new LoginDialog();
+		LoginDialogBuilder dialog = new LoginDialogBuilder();
 		Optional<Map<String, String>> result = dialog.getDialog().showAndWait();
 		if (!result.isPresent()) {
 			return false;
@@ -81,7 +79,7 @@ public class ClientView extends Application {
 		Map<String, String> results = result.get();
 		String username = results.get("username");
 		String password = results.get("password");
-		String host = results.get("password");
+		String host = results.get("host");
 		String port = results.get("port");
 
 		try {
@@ -114,10 +112,6 @@ public class ClientView extends Application {
 			alert.setContentText(errorMessage);
 		}
 		alert.showAndWait();
-	}
-
-	public static void main(String[] args) {
-		launch(args);
 	}
 
 }

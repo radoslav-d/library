@@ -88,9 +88,7 @@ public class SearchBookFormBuilder {
 		markBookButton.setOnMouseClicked(event -> {
 			if (book.isTaken()) {
 				bookManager.markBookAsReturned(book.getId(), new Date(System.currentTimeMillis()));
-				book.setTaken(false);
-				book.setReturnedOn(new Date(System.currentTimeMillis()));
-				book.setTakenBy("");
+				book.markAsReturned();
 				searchResults.getItems().remove(cellIndex);
 				searchResults.getItems().add(book);
 			} else {
@@ -167,10 +165,10 @@ public class SearchBookFormBuilder {
 	private Text formatAsTextNode(String text, int symbols) {
 		int spacesToAdd = symbols - text.length();
 		if (spacesToAdd > 0) {
-			String formatted = String.format("%s%" + spacesToAdd + "s.", text, "");
-			return new Text(formatted);
+			String formatted = String.format("%s%" + spacesToAdd + "s", text, "");
+			return new Text(formatted + " ||");
 		}
-		return new Text(text);
+		return new Text(text + " ||");
 	}
 
 	private Text getNotTakenText() {

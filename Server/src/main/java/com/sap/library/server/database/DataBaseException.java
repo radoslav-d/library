@@ -1,4 +1,4 @@
-package com.sap.library.Server;
+package com.sap.library.server.database;
 
 public class DataBaseException extends RuntimeException {
 

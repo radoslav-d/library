@@ -31,7 +31,7 @@ public class Message implements Serializable {
 	 * - DELETE_BOOK_REQUEST: requires a book ID as an int;
 	 * 
 	 * - MARK_BOOK_AS_TAKEN_REQUEST: requires a book ID as an int, person name as a
-	 * String, a Date from and an Optional<Date> to;
+	 * String, a Date from and an Date to;
 	 * 
 	 * - MARK_BOOK_AS_RETURNED_REQUEST: requires a book ID as an int and a Date, on
 	 * which is returned;
@@ -39,11 +39,6 @@ public class Message implements Serializable {
 	 * - SEARCH_REQUEST: requires a String;
 	 * 
 	 * - SEARCH_RESPONSE: requires a List<Book>;
-	 * 
-	 * - IS_BOOK_TAKEN_REQUEST: requires a book ID as an int;
-	 * 
-	 * - IS_BOOK_TAKEN_RESPONSE: requires an Optional<String> containing the person,
-	 * who has taken the book;
 	 * 
 	 * - NOT_RETURNED_BOOKS_REQUEST: does not require anything;
 	 * 
@@ -71,18 +66,81 @@ public class Message implements Serializable {
 	}
 
 	public enum MessageType {
-		AUTHENTICATION_REQUEST, AUTHENTICATION_FAILED, AUTHENTICATION_SUCCESS,
 
-		REGISTER_REQUEST, REGISTER_FAILED, REGISTER_SUCCESS,
+		/**
+		 * Sent by client is requesting authentication
+		 */
+		AUTHENTICATION_REQUEST,
 
-		ADD_BOOK_REQUEST, DELETE_BOOK_REQUEST,
+		/**
+		 * Sent by server when the authentication failed
+		 */
+		AUTHENTICATION_FAILED,
 
-		MARK_BOOK_AS_TAKEN_REQUEST, MARK_BOOK_AS_RETURNED_REQUEST,
+		/**
+		 * Sent by server when the authentication is successful
+		 */
+		AUTHENTICATION_SUCCESS,
 
-		SEARCH_REQUEST, SEARCH_RESPONSE,
+		/**
+		 * Sent by client is requesting registration
+		 */
+		REGISTER_REQUEST,
 
-		NOT_RETURNED_BOOKS_REQUEST, NOT_RETURNED_BOOKS_RESPONSE,
+		/**
+		 * Sent by server when the registration failed
+		 */
+		REGISTER_FAILED,
 
+		/**
+		 * Sent by server when the registration is successful
+		 */
+		REGISTER_SUCCESS,
+
+		/**
+		 * Sent by client when wants to add new book
+		 */
+		ADD_BOOK_REQUEST,
+
+		/**
+		 * Sent by client when wants to delete book
+		 */
+		DELETE_BOOK_REQUEST,
+
+		/**
+		 * Sent by client when wants to mark a book as taken
+		 */
+		MARK_BOOK_AS_TAKEN_REQUEST,
+
+		/**
+		 * Sent by client when wants to mark a book as returned
+		 */
+		MARK_BOOK_AS_RETURNED_REQUEST,
+
+		/**
+		 * Sent by client when wants to fetch books matching criteria
+		 */
+		SEARCH_REQUEST,
+
+		/**
+		 * Sent by server as a result of search request
+		 */
+		SEARCH_RESPONSE,
+
+		/**
+		 * Sent by client when wants to fetch all books that are not returned
+		 */
+		NOT_RETURNED_BOOKS_REQUEST,
+
+		/**
+		 * Sent by server as a result of request for not returned books
+		 */
+		NOT_RETURNED_BOOKS_RESPONSE,
+
+		/**
+		 * Sent by server when there is a problem. Sent by client when wants to
+		 * disconnect
+		 */
 		DISCONNECT_REQUEST
 	}
 }

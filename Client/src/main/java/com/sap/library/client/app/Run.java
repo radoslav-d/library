@@ -11,8 +11,11 @@ import javafx.application.Application;
  */
 public class Run {
 
+	private Run() {
+		// Utility class constructor
+	}
+
 	public static void main(String[] args) {
 		Application.launch(ClientView.class, args);
 	}
-
 }

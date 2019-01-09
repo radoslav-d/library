@@ -1,9 +1,7 @@
-package com.sap.library.Server;
+package com.sap.library.server.database;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -15,15 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sap.library.utilities.Book;
-import com.sap.library.utilities.PasswordUtils;
-import com.sap.library.utilities.exceptions.AuthenticationFailedException;
-import com.sap.library.utilities.exceptions.RegistrationFailedException;
 
-public class PostgreService {
+public class PostgreService implements DataBaseService {
 
-	private static final String SELECT_USER = "SELECT * FROM users WHERE username=?";
 	private static final String INSERT_BOOK = "INSERT INTO books (isbn, title, author, year, isTaken) VALUES (?, ?, ?, ?, false)";
-	private static final String INSERT_NEW_USER = "INSERT INTO users (username, hash) VALUES (?, ?)";
 	private static final String DELETE_BOOK_BY_ID = "DELETE FROM books WHERE id=?";
 	private static final String MARK_BOOK_AS_TAKEN = "UPDATE books SET isTaken=true, takenBy=?, takenOn=?, returnedOn=? WHERE id=?";
 	private static final String MARK_BOOK_AS_RETURNED = "UPDATE books SET isTaken=false, takenBy=NULL, returnedOn=? WHERE id=?";
@@ -49,46 +42,12 @@ public class PostgreService {
 		connection = DriverManager.getConnection(dbUrl, credetentials[0], credetentials[1]);
 	}
 
+	public Connection getConnection() {
+		return this.connection;
+	}
+
 	public void close() throws SQLException {
 		connection.close();
-	}
-
-	public void authenticate(String username, String password) {
-		try (ResultSet result = fetchUser(username)) {
-			if (!result.next()) {
-				throw new AuthenticationFailedException("There is no such user!");
-			}
-			String hash = result.getString("hash");
-			if (!PasswordUtils.check(password, hash)) {
-				throw new AuthenticationFailedException("The password does not match!");
-			}
-		} catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-			throw new AuthenticationFailedException(e);
-		}
-	}
-
-	public void registerUser(String username, String password) {
-		try (ResultSet result = fetchUser(username)) {
-			if (result.next()) {
-				throw new RegistrationFailedException("There is already an user with the same username");
-			}
-		} catch (SQLException e) {
-			throw new RegistrationFailedException(e);
-		}
-		try (PreparedStatement prepStatement = connection.prepareStatement(INSERT_NEW_USER)) {
-			String hash = PasswordUtils.getSaltedHash(password);
-			prepStatement.setString(1, username);
-			prepStatement.setString(2, hash);
-			prepStatement.executeUpdate();
-		} catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
-			throw new RegistrationFailedException(e);
-		}
-	}
-
-	private ResultSet fetchUser(String username) throws SQLException {
-		PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER);
-		preparedStatement.setString(1, username);
-		return preparedStatement.executeQuery();
 	}
 
 	public void addBook(Book book) throws SQLException {
@@ -127,7 +86,7 @@ public class PostgreService {
 	}
 
 	public List<Book> searchBook(String criteria) throws SQLException {
-		if (criteria.matches("^[0-9]*$")) {
+		if (criteria.matches("^[0-9]*$") && criteria.length() < 7) {
 			return searchWithOutAlphaNumericalCriteria(criteria);
 		}
 		return searchWithAlphaNumericalCriteria(criteria);
@@ -176,6 +135,7 @@ public class PostgreService {
 			book.setIsbn(result.getString("isbn"));
 			book.setTitle(result.getString("title"));
 			book.setAuthor(result.getString("author"));
+			book.setYearOfPublishing(Integer.parseInt(result.getString("year")));
 			book.setTaken(result.getBoolean("isTaken"));
 			book.setTakenBy(result.getString("takenBy"));
 			book.setTakenOn(result.getDate("takenOn"));

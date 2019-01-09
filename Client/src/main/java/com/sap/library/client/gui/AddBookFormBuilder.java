@@ -12,6 +12,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+/**
+ * Constructs the AddBookForm using fluent interface.
+ * 
+ * @author Radoslav Dimitrov
+ *
+ */
 public class AddBookFormBuilder {
 
 	private Label addBookLabel;
@@ -66,12 +72,16 @@ public class AddBookFormBuilder {
 			yearField.clear();
 		});
 
-		addBookButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-			return isbnField.getText().trim().isEmpty() || titleField.getText().trim().isEmpty()
-					|| authorField.getText().trim().isEmpty() || yearField.getText().trim().isEmpty();
-		}, isbnField.textProperty(), titleField.textProperty(), authorField.textProperty(), yearField.textProperty()));
+		addBookButton.disableProperty()
+				.bind(Bindings.createBooleanBinding(() -> shouldAddButtonBeEnabled(), isbnField.textProperty(),
+						titleField.textProperty(), authorField.textProperty(), yearField.textProperty()));
 
 		return this;
+	}
+
+	private boolean shouldAddButtonBeEnabled() {
+		return isbnField.getText().trim().isEmpty() || titleField.getText().trim().isEmpty()
+				|| authorField.getText().trim().isEmpty() || yearField.getText().trim().isEmpty();
 	}
 
 	private AddBookFormBuilder setYearFieldSanitation() {
