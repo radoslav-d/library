@@ -18,8 +18,8 @@ import javafx.beans.property.SimpleObjectProperty;
 public class LocaleBinder {
 
 	public static final Locale BG_LOCALE = new Locale("bg", "BG");
-
 	public static final Locale EN_LOCALE = new Locale("en", "EN");
+	public static final Locale GE_LOCALE = new Locale("ge", "GE");
 
 	/**
 	 * The current locale.

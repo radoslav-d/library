@@ -9,6 +9,7 @@ public class LanguageButtons {
 
 	private static final String EN_LANGUAGE_BUTTON_IMAGE_PATH = "src/main/resources/image-resources/en-lang.png";
 	private static final String BG_LANGUAGE_BUTTON_IMAGE_PATH = "src/main/resources/image-resources/bg-lang.png";
+	private static final String GE_LANGUAGE_BUTTON_IMAGE_PATH = "src/main/resources/image-resources/ge-lang.png";
 
 	private LanguageButtons() {
 		// Utility class constructor
@@ -30,6 +31,15 @@ public class LanguageButtons {
 		// changes the text in the GUI depending on the clicked image view
 		bgLangButton.setOnMouseClicked(event -> LocaleBinder.setLocale(LocaleBinder.BG_LOCALE));
 		return bgLangButton;
+	}
+
+	public static Node getGeButton() {
+		ImageView geLangButton = new ImageView(new File(GE_LANGUAGE_BUTTON_IMAGE_PATH).toURI().toString());
+		geLangButton.setFitHeight(30);
+		geLangButton.setFitWidth(30);
+		// changes the text in the GUI depending on the clicked image view
+		geLangButton.setOnMouseClicked(event -> LocaleBinder.setLocale(LocaleBinder.GE_LOCALE));
+		return geLangButton;
 	}
 
 }

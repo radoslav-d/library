@@ -41,6 +41,7 @@ public class ClientView extends Application {
 			}
 			Node bgLangButton = LanguageButtons.getBgButton();
 			Node enLangButton = LanguageButtons.getEnButton();
+			Node geLangButton = LanguageButtons.getGeButton();
 			Node addBookForm = new AddBookFormBuilder(bookManager).getAddBookForm();
 			Node searchBookForm = new SearchBookFormBuilder(bookManager).getSearchBookForm();
 			GridPane grid = new GridPane();
@@ -48,6 +49,7 @@ public class ClientView extends Application {
 			grid.add(addBookForm, 1, 1);
 			grid.add(enLangButton, 2, 0);
 			grid.add(bgLangButton, 3, 0);
+			grid.add(geLangButton, 4, 0);
 			primaryStage.setScene(new Scene(grid));
 			primaryStage.titleProperty().bind(LocaleBinder.createStringBinding(BASE_NAME, "stage.title"));
 			primaryStage.setOnCloseRequest(event -> stop());

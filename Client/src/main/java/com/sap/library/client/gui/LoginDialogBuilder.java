@@ -48,6 +48,7 @@ public class LoginDialogBuilder {
 
 	private Node enLangButton;
 	private Node bgLangButton;
+	private Node geLangButton;
 
 	/**
 	 * Constructs the LoginDialog using fluent interface.
@@ -203,7 +204,8 @@ public class LoginDialogBuilder {
 		grid.add(repeatPasswordTextField, 0, 3);
 		grid.add(passwordsNotEqual, 0, 4);
 		grid.add(enLangButton, 6, 0);
-		grid.add(bgLangButton, 6, 1);
+		grid.add(bgLangButton, 7, 0);
+		grid.add(geLangButton, 8, 0);
 		grid.add(defaultConfigButton, 3, 0);
 		grid.add(advancedConfigButton, 3, 1);
 		grid.add(hostTextField, 3, 2);
@@ -214,6 +216,7 @@ public class LoginDialogBuilder {
 	private LoginDialogBuilder setLanguageChangeButtons() {
 		enLangButton = LanguageButtons.getEnButton();
 		bgLangButton = LanguageButtons.getBgButton();
+		geLangButton = LanguageButtons.getGeButton();
 		return this;
 	}
 
